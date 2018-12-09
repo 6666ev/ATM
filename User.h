@@ -11,16 +11,16 @@
 #include <windows.h>
 #define N 10000
 
-struct user //用户信息
+struct user
 {
     char acnum[9];    //用户账号
     char pswdnum[7];  //用户密码
     char name[20];    //用户名字
-    char idnum[20];   //用户身份证
-    char phnum[15];   //用户手机号
-    char adrss[105];  //用户地址
-    char cardnum[20]; //用户银行卡号
-    double mony;      //现有金额
+    //char idnum[20];   //用户身份证
+    //char phnum[15];   //用户手机号
+    //char adrss[105];  //用户地址
+    //char cardnum[20]; //用户银行卡号
+    double money;      //现有金额
     int ero;          //挂失情况
 } u[N];
 
@@ -36,14 +36,12 @@ void withdraw(int);       //取款
 void changePassword(int); //修改密码
 void lostUser(int);       //用户注销
 void showInfo(int);       //用户信息查询
-void find();              //取消挂失
 void adminOperate();      //管理员操作界面
 void isLost();            //显示挂失的用户并确认
 void search();            //显示用户信息
 void date();              //显示当前的时间日期
 int checkAdd(char addmoney[]);
 int checkReduce(char reducemoney[], int j);
-int A = 0; //表示用户数量
 char ac[11], pass[10];
 char account[11], password[10];
 #endif //ATM_USER_H
