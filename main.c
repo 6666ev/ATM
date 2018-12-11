@@ -17,7 +17,7 @@ void SetPos(int x,int y)
 }
 int main()
 {
-    setColor(7,0);
+    setColor(10,0);
     int i;
     date();
     aboutFile();

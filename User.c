@@ -184,7 +184,7 @@ void missAccount()
     }
     for (i = 0; i <= 100; i++)
     {
-        fscanf(fy, "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%lf\t%d\n", u[i].acnum, u[i].pswdnum, u[i].name, &u[i].money, &u[i].ero);
+        fscanf(fy, "%s\t%s\t%s\t%lf\t%d\n", u[i].acnum, u[i].pswdnum, u[i].name, &u[i].money, &u[i].ero);
     }
     fclose(fy);
     do
@@ -259,7 +259,7 @@ void deposit(int n)
     do
     {
         system("cls");
-        printf("\n\n\t\tplease input amount of the money you want to save");
+        printf("\n\n\t\tplease input amount of the money you want to save:");
         gets(m);
     } while (checkAdd(m) == 0);
     money = atoi(m);
@@ -288,7 +288,7 @@ void withdraw(int n)
     do
     {
         system("cls");
-        printf("\n\n\t\tplease input the amount of money you want to withdraw");
+        printf("\n\n\t\tplease input the amount of money you want to withdraw:");
         gets(m);
     } while (checkReduce(m, n) == 0);
     money = atoi(m);
