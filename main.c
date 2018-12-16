@@ -1,8 +1,5 @@
-﻿#include "User.h"
-#ifdef __clang__
-	#include "User.c" 
-#endif
-//解决6ev的linker问题
+#include "User.h"
+#include "User.c"
 
 void setColor(unsigned short ForeColor, unsigned short BackGroundColor) {
     HANDLE handle=GetStdHandle(STD_OUTPUT_HANDLE);//获取当前窗口句柄
@@ -20,7 +17,7 @@ void SetPos(int x,int y)
 }
 int main()
 {
-    setColor(10,0);
+    setColor(7,0);
     int i;
     date();
     aboutFile();
