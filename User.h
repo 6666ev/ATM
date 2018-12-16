@@ -14,7 +14,7 @@
 struct user
 {
     char acnum[9];    //用户账号
-    char pswdnum[7];  //用户密码
+    char pswdnum[20];  //用户密码
     char name[20];    //用户名字
     //char idnum[20];   //用户身份证
     //char phnum[15];   //用户手机号
@@ -23,6 +23,8 @@ struct user
     double money;      //现有金额
     int ero;          //挂失情况
 } u[N];
+
+int checkPw(char *password); //检查密码合法性
 
 void aboutFile();         //文件准备
 void userInterface();     //用户操作界面
@@ -42,6 +44,7 @@ void search();            //显示用户信息
 void date();              //显示当前的时间日期
 int checkAdd(char addmoney[]);
 int checkReduce(char reducemoney[], int j);
-char ac[11], pass[10];
-char account[11], password[10];
-#endif //ATM_USER_H
+char ac[11], pass[20];
+char account[11], password[20];
+#endif
+//ATM_USER_H
