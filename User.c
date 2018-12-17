@@ -1,19 +1,23 @@
-#include "User.h"
-int A = 0; //表示用户数量
+//
+// Created by 96399 on 2018/12/16.
+//
+
+#include "user.h"
+int A=0;
+//文件准备函数
 void aboutFile()
 {
-    FILE *fp = fopen("userinfo.txt", "r");
-    if (fp == NULL)
+    FILE *fp = fopen("test.txt", "r");
+    if (!fp)
     {
-        printf("user file doesn't exist, building");
-        FILE *fp = fopen("userinfo.txt", "w");
+        FILE *fp = fopen("test.txt", "w");
         fclose(fp);
+        return;
     }
-    else
-    {
-        fclose(fp);
-    }
+    fclose(fp);
 }
+
+//捕获时间函数
 void date()
 {
     printf("current date");
@@ -24,58 +28,79 @@ void date()
     printf("\t");
     system("time/t");
 }
+
+//主界面函数
+void Main()
+{
+    int i;
+    system("cls");
+    aboutFile();
+    system("color 31");
+    date();
+    printf("\n\n\n\t\t\tPlease select your identity category: ");
+    printf("\n\n\t\t\t1.user   ");
+    printf("\n\n\t\t\t2.admin   ");
+    printf("\n\n\t\t\t3.exit   ");
+    printf("\n\n\n");
+    printf("\t\t\tplease choose:");
+    fflush(stdin);
+    scanf("%d", &i);
+    if(i==1)
+        userInterface();
+    if(i==2)
+        adminInterface();
+    if(i==3)
+        return;
+}
+
+//用户界面
 void userInterface()
 {
     system("cls");
-    int a;
     date();
-    FILE *fy = fopen("userinfo.txt", "r");
-    if (!fy)
-    {
+    int i;
+    FILE *fp = fopen("test.txt", "r");
+    if (!fp)
         printf("fail to read file\n");
-    }
     printf("\n\n\n\n\t\t\t*******please choose your entrance*******");
     printf("\n\n\t\t\t1.log on\n\n\t\t\t2.sign up\n\n\t\t\t3.report for lost\n\n\t\t\t4.exit\n");
     printf("\n\n\t\t\tplease input your choice:");
     fflush(stdin);
-    scanf("%d", &a);
-    switch (a)
-    {
-        case 1:
-            logIn();
-            break;
-        case 2:
-            signIn();
-            break;
-        case 3:
-            missAccount();
-        case 4:
-            exit(0);
-    }
+    scanf("%d", &i);
+    if(i==1)
+        logIn();
+    if(i==2)
+        signIn();
+    if(i==3)
+        missAccount();
+    if(i==4)
+        Main();           //回到主界面
 }
+
 void logIn()
 {
     system("cls");
-    FILE *fp = fopen("userinfo.txt", "r");
     date();
+    char inputAccount[10];   //用户输入的帐号
+    char inputPassword[10];  //用户输入的密码
+    FILE *fp = fopen("test.txt", "r");
     if (!fp)
-    {
         printf("fail to open file");
-    }
-    int i, n,index;
-    int j = 0, k = 3;
-    for (i = 0; i <= 100; i++)
-    {
-        fscanf(fp, "%s\t%s\t%s\t%lf\t%d\n", u[i].acnum, u[i].pswdnum, u[i].name,&u[i].money,&u[i].ero);
-    }
+    int chanceNumber=3;
+    int i;                   //将被选出来的用户序号;
+    int j=0;                 //一个flag;
+    for (i = 0; i <=N; i++)
+        fscanf(fp, "%s\t%s\t%s\t%lf\t%d\n", user[i].accounts, user[i].password, user[i].name,&user[i].prestore,&user[i].isMissing);
     fclose(fp);
-    printf("\n\n\t\tplease input your account:");
-    scanf("%s", ac);
-    for (i = 0; i <= 100; i++)
+    printf("\n\n\t\tplease input your right account: ");
+    getchar();
+    gets(inputAccount);
+    for (i = 0; i <=N; i++)
     {
-        if (strcmp(u[i].acnum, ac) == 0)
+        if (strcmp(user[i].accounts, inputAccount) == 0)                  //进行对比
         {
-            if (u[i].ero == 1)
+            j++;                              //flag;
+            if (user[i].isMissing == 1)                                      //注册的帐号被挂失时的情况;
             {
                 printf("\n\n\t\tthis card is reported missing");
                 getchar();
@@ -86,146 +111,115 @@ void logIn()
                 break;
         }
     }
-    for (index = 0; index <= 100; index++)
-        if (strcmp(u[index].acnum, ac) == 0)
-            j++;
-    if (j == 0)
+    if (j == 0)                                            //帐号不存在的情况
     {
         printf("\n\n\t\tthis account doesn't exist or being signed off, \n\t\tplease sign up and log on (input Enter to return)");
         getchar();
         getchar();
         userInterface();
     }
-    L:
-    printf("\n\t\tplease input your password:");
-    scanf("%s", pass);
-    n = strcmp(u[i].pswdnum, pass);
-    if (n != 0 && k != 0)
+    //登录密码次数的现在
+    while(chanceNumber--)
     {
-        k--;
-        printf("\n\n\t\twrong password, there are %d chances left", k);
-        getch();
-        fflush(stdin);
-        goto L;
+        int flag;
+        printf("\n\t\tplease input your password:");
+        gets(inputPassword);
+        flag=strcmp(user[i].password, inputPassword);
+        if(flag)
+        {
+            printf("\n\n\t\twrong password, there are %d chances left", chanceNumber);
+            fflush(stdin);
+            continue;
+        }
+        else
+        {
+            break;
+        }
     }
-    else if (n != 0)
-    {
-        printf("\n\n\t\tyou have run out of chances\n");
-        getch();
-        userInterface();
-    }
-    else if ( k != 0)
-    {
-        printf("\n\n\t\tlog on successful");
-        printf("\n\n\t\tinput any key to continue->");
-        getch();
-        userOperate(i);
-    }
+    printf("\n\n\t\tlog on successful");
+    printf("\n\n\t\tinput any key to continue->");
+    getchar();
+    userOperate(i);
 }
 
 void signIn()
 {
     system("cls");
-    FILE *op, *fp;
-    int i, index;
-    int j = 0;
-    char ac[10];
-    fp = fopen("userinfo.txt", "r");
-    for (i = 0; i <= 100; i++)
-    {
-        fscanf(fp, "%s\t%s\t%s\t%lf\t%d\n", u[A].acnum, u[A].pswdnum, u[A].name,&u[A].money,&u[A].ero);
-    }
-    fclose(fp);
-    op = fopen("userinfo.txt", "a+");
     date();
     fflush(stdin);
+    int j = 0;
+    char inputAccounts[10];   //记录用户输入的帐号
+    FILE* fp = fopen("test.txt", "r");
+    for (int i = 0; i <= N; i++)
+        fscanf(fp, "%s\t%s\t%s\t%lf\t%d\n", user[i].accounts, user[i].password, user[i].name,&user[i].prestore,&user[i].isMissing);
+    fclose(fp);
+    FILE* op = fopen("test.txt", "a+");
     if (!op)
-    {
         printf("fail to open file");
-    }
-
-    printf("\n\n\t\tplease input your account(less than 9 letter):");
-    gets(ac);
-    for (index = 0; index <= 100; index++)
-        if (strcmp(u[index].acnum, ac) == 0)
-            j++;
+    printf("\n\n\t\tplease input your account(less than 10 letter):");
+    gets(inputAccounts);
+    for (int i = 0; i <= N; i++)                   //进行对比，看帐号是否被注册
+        if (strcmp(user[i].accounts, inputAccounts) == 0)
+            j++;         //flag;
     if (j != 0)
     {
         printf("\n\t\tthis account has been signed up, try again please!(input Enter to return)");
         getchar();
         userInterface();
     }
-    strcpy(u[A].acnum, ac);
-    printf("\n\t\tyour password should be at least 6 letters and contains both alpha and number");
-    printf("\n\t\tplease input your password:");
-    
-    int flag;
-    char pw[20];
-    do{
-        gets(pw);
-        flag=checkPw(pw);
-        if(flag==0){
-            printf("\n\t\tinvalid password!\n\t\tinput again:");
-        }
-    } while (flag == 0);
-    strcpy(u[A].pswdnum,pw);
-
+    strcpy(user[A].accounts, inputAccounts);
+    printf("\n\t\tplease input your password(less than 6 letter):");
+    gets(user[A].password);
     printf("\n\t\tplease input your name:");
-    gets(u[A].name);
+    gets(user[A].name);
     printf("\n\t\tprestored money:");
-    scanf("%lf", &u[A].money);
-    u[A].ero = 0;
-    fprintf(op, "%s\t%s\t%s\t%.2lf\t%d\n", u[A].acnum, u[A].pswdnum, u[A].name,u[A].money,u[A].ero);
-    A++;
+    scanf("%lf", &user[A].prestore);
+    user[A].isMissing=0;
+    fprintf(op, "%s\t%s\t%s\t%.2lf\t%d\n", user[A].accounts, user[A].password, user[A].name,user[A].prestore,user[A].isMissing);
+    A++;                       //增加了一名用户;
     fclose(op);
     printf("\n\n\t\treturn to last page, input random key to continue->");
-    getch();
-    userInterface();
+    getchar();
+    userInterface();                //返回到主界面
 }
+
 void missAccount()
 {
     system("cls");
-    int i, j, k;
     date();
-    FILE *fy = fopen("userinfo.txt", "r");
-
-    if (!fy)
-    {
+    int i, j, k;             //j,k两个flag;
+    char inputAccounts[10];
+    char inputPassword[10];
+    FILE *fp = fopen("test.txt", "r");
+    if (!fp)
         printf("fail to create file\n");
-    }
-    for (i = 0; i <= 100; i++)
+    for (i=0;i<=N;i++)
+        fscanf(fp, "%s\t%s\t%s\t%lf\t%d\n", user[i].accounts, user[i].password, user[i].name,&user[i].prestore,&user[i].isMissing);
+    fclose(fp);
+    //进行注销
+    printf("\n\n\t\tplease input your right account to be reported missing");
+    getchar();
+    gets(inputAccounts);
+    printf("\n\t\tinput your password:");
+    gets(inputPassword);
+    for (i =0;i<=N; i++)
     {
-        fscanf(fy, "%s\t%s\t%s\t%lf\t%d\n", u[i].acnum, u[i].pswdnum, u[i].name, &u[i].money, &u[i].ero);
-    }
-    fclose(fy);
-    do
-    {
-        printf("\n\n\t\tplease input your account to be reported missing:");
-        scanf("%s", ac);
-        putchar('\n');
-        printf("\t\tinput your password:");
-        scanf("%s", pass);
-        for (i = 0; i <= 100; i++)
+        j = strcmp(user[i].accounts, inputAccounts);
+        k = strcmp(user[i].password, inputPassword);
+        if (j == 0 && k == 0)
         {
-            j = strcmp(u[i].acnum, ac);
-            k = strcmp(u[i].pswdnum, pass);
-            if (j == 0 && k == 0)
-            {
-                u[i].ero = 1;
-                printf("\n\n\t\treport missing finished");
-                break;
-            }
+            user[i].isMissing = 1;
+            printf("\n\n\t\treport missing finished");
+            break;
         }
-    } while (i >= 101);
-    FILE *fz = fopen("userinfo.txt", "w");
-    for (i = 0; i <= 100; i++)
-    {
-        if (strcmp(u[i].acnum, "\0") != 0)
-            fprintf(fz, "%s\t%s\t%s\t%.2lf\t%d\n", u[i].acnum, u[i].pswdnum, u[i].name, u[i].money, u[i].ero);
     }
+    FILE *fz = fopen("test.txt", "w");
+    for (i=0;i<=N; i++)
+        if (strcmp(user[i].accounts, "\0") != 0)
+            fprintf(fz, "%s\t%s\t%s\t%.2lf\t%d\n", user[i].accounts, user[i].password, user[i].name,user[i].prestore,user[i].isMissing);
     fclose(fz);
     printf("\n\n\t\treturn to last page, input random key to continue->");
-    getch();
+    getchar();
     userInterface();
 }
 
@@ -233,245 +227,116 @@ void userOperate(int n)
 {
     system("cls");
     date();
-    int a;
+    int i;
     printf("\n\n\n\n\t\t\t*******choose your wanted *******");
     printf("\n\n\t\t\t1.save money\n\n\t\t\t2.withdraw money  \n\n\t\t\t3.change password  \n\n\t\t\t4.user sign off  \n\n\t\t\t5.search info \n\n\t\t\t6.exit \n");
-
     printf("\n\t\tplease input your choice:");
     fflush(stdin);
-    scanf("%d", &a);
-    switch (a)
-    {
-        case 1:
-            deposit(n);
-            break;
-        case 2:
-            withdraw(n);
-            break;
-        case 3:
-            changePassword(n);
-            break;
-        case 4:
-            lostUser(n);
-            break;
-        case 5:
-            showInfo(n);
-            break;
-        case 6:
-            exit(0);
-    }
+    scanf("%d", &i);
+    if(i==1)
+        deposit(n);
+    if(i==2)
+        withdraw(n);
+    if(i==3)
+        changePassword(n);
+    if(i==4)
+        lostUser(n);
+    if(i==5)
+        showInfo(n);
+    if(i==6)
+        userInterface();
 }
+
 void deposit(int n)
 {
     date();
-    int i, money;
-    double temp;
-    char m[10];
-    do
-    {
-        system("cls");
-        printf("\n\n\t\tplease input amount of the money you want to save:");
-        gets(m);
-    } while (checkAdd(m) == 0);
-    money = atoi(m);
-    temp = money + u[n].money;
-    u[n].money = temp;
+    int money;
+    double TS;               //暂存数据;
+    char inputMoney[10];
+    system("cls");
+    printf("\n\n\t\tplease input amount of the money you want to save");
+    getchar();
+    gets(inputMoney);
+    money=atoi(inputMoney);
+    TS= money + user[n].prestore;
+    user[n].prestore=TS;
     printf("\n\t\tsave money successful");
-    printf("\t\tyour current balance is:\t%.2lf\n", u[n].money);
-    FILE *fz = fopen("userinfo.txt", "w");
-    for (i = 0; i <= 99; i++)
+    printf("\t\tyour current balance is:\t%.2lf\n", user[n].prestore);
+    FILE *fz = fopen("test.txt", "w");
+    for (int i=0; i<N; i++)
     {
-        if (strcmp(u[i].acnum, "\0") != 0)
-            fprintf(fz, "%s\t%s\t%s\t%.2lf\t%d\n", u[i].acnum, u[i].pswdnum, u[i].name, u[i].money,u[i].ero);
+        if (strcmp(user[i].accounts, "\0") != 0)
+            fprintf(fz, "%s\t%s\t%s\t%.2lf\t%d\n", user[i].accounts, user[i].password, user[i].name,user[i].prestore,user[i].isMissing);
     }
     fclose(fz);
     printf("\n\n\t\treturn to last page, input random key to continue->");
-    getch();
+    getchar();
     userOperate(n);
 }
 
 void withdraw(int n)
 {
     date();
-    int i, money;
-    double temp;
-    char m[10];
-    do
-    {
-        system("cls");
-        printf("\n\n\t\tplease input the amount of money you want to withdraw:");
-        gets(m);
-    } while (checkReduce(m, n) == 0);
-    money = atoi(m);
+    int  money;
+    double TS;
+    char inputMoney[10];
+    system("cls");
+    printf("\n\n\t\tplease input the amount of money you want to withdraw");
+    getchar();
+    gets(inputMoney);
+    money = atoi(inputMoney);
     printf("\n\t\twithdraw successful, please get your paper money in the right port\n\n");
-    temp = u[n].money - money;
-    u[n].money = temp;
-    printf("\t\tyour current balance is:%.2lf\n", u[n].money);
+    TS = user[n].prestore-money;
+    user[n].prestore =TS;
+    printf("\t\tyour current balance is:%.2lf\n", user[n].prestore);
 
-    FILE *fy = fopen("userinfo.txt", "w");
-    for (i = 0; i <= 99; i++)
+    FILE *fp = fopen("test.txt", "w");
+    for (int i=0; i<N; i++)
     {
-        if (strcmp(u[i].acnum, "\0") != 0)
-            fprintf(fy, "%s\t%s\t%s\t%.2lf\t%d\n", u[i].acnum, u[i].pswdnum, u[i].name,  u[i].money,u[i].ero);
+        if (strcmp(user[i].accounts, "\0") != 0)
+            fprintf(fp, "%s\t%s\t%s\t%.2lf\t%d\n", user[i].accounts, user[i].password, user[i].name,user[i].prestore,user[i].isMissing);
     }
-    fclose(fy);
+    fclose(fp);
     printf("\n\n\t\treturn to last page, input random key to continue->");
-
-    getch();
+    getchar();
     userOperate(n);
-}
-
-//检验所输入字符是否符合要求：数字字符，位于100--10000的100的倍数
-//符合要求返回1，不符合返回0
-
-int checkAdd(char addmoney[])
-{
-    int i = 0, money; //检查待存入金额位数
-
-    while (addmoney[i] != '\0')
-    {
-        if (addmoney[i] < '0' || addmoney[i] > '9') //检验输入字符的合法性
-        {
-            printf("\n\n\t\tinvalid character! input random key to continue\n");
-            getch();
-            return 0; //输入字符返回0，该检验不合格
-        }
-        i++;
-    }
-
-    if (i >= 6) //检验金额位数是否合法
-    {
-        // printf("\n\n\t\t一次性所存金额超过最大限度！\n\n\t\t按任意键继续操作\n");
-        printf("\n\n\t\tsaving money exceeded the maximum limit\n\n\t\tinput random key to continue\n");
-
-        getch();
-        return 0;
-    }
-
-    money = atoi(addmoney); //将字符型金额转化为整型
-    if (money % 100 == 0)   //检验金额数是否为100的倍数
-    {
-        if (money <= 10000 && money >= 100) //检验金额数是否符合规定范围
-            return 1;
-        else
-        {
-            // printf("\n\n\t\t金额应位于100--10000区间范围,按任意键继续操作");
-            printf("\n\n\t\tthe amount of money should be located between 100 and 10000,input random key to continue");
-
-            getch();
-            return 0;
-        }
-    }
-    else
-    {
-        // printf("\n\n\t\t存入金额数应为100的倍数！按任意键继续操作\n");
-        printf("\n\n\t\tsaving money should be multiple of 100, input random key to continue\n");
-
-        getch();
-        return 0;
-    }
-}
-//用于检查所取金额数是否符合要求：数字字符，位于100--3000的100的数
-//符合要求返回1，不符合返回0
-//用到头文件<stdlib.h>
-
-int checkReduce(char reducemoney[], int j)
-{
-    int i = 0, money; //用于累计预取金额位数
-
-    while (reducemoney[i] != '\0')
-    {
-        if (reducemoney[i] < '0' || reducemoney[i] > '9') //检验输入字符的合法性
-        {
-            // printf("\n\n\t\t输入的字符为非法字符!\n\n\t\t按任意键继续操作\n");
-            printf("\n\n\t\tinvalid character!\n\n\t\tinput random key to continue\n");
-            getch();
-            return 0; //输入字符违法返回上一界面
-        }
-        i++;
-    }
-
-    if (i >= 5) //检验预取金额位数是否合法
-    {
-        // printf("\n\n\t\t一次性所存金额超过最大限度！\n\n\t\t按任意键继续操作\n");
-        printf("\n\n\t\tsaving money exceeded the maximum limit\n\n\t\tinput random key to continue\n");
-
-        getch();
-        return 0;
-    }
-
-    money = atoi(reducemoney); //将字符型金额转化为整型
-
-    if (money % 100 == 0) //检验预取金额数是否为100的倍数
-    {
-        if (money <= 3000 && money >= 100) //检验预取金额数是否符合规定范围
-        {
-            if (u[j].money >= money) //检验预取金额数是否小于用户余额
-                return 1;
-            else
-            {
-                // printf("\n\n\t\t您的余额不足！\n\n\t\t目前您的余额为:");
-                // printf("%.2lf\n\n\t\t按任意键继续操作", u[j].money);
-
-                printf("\n\n\t\tyour Your balance is insufficient.\n\n\t\tyour current balance is:");
-                printf("%.2lf\n\n\t\tinput random key to continue", u[j].money);
-                getch();
-                return 0;
-            }
-        }
-        else
-        {
-            // printf("\n\n\t\t金额数应在100--3000范围内,按任意键继续操作");
-
-            getch();
-            return 0;
-        }
-    }
-    else
-    {
-        // printf("\n\n\t\t所取金额数不合法,应为100的倍数！\n\n\t\t按任意键继续操作\n");
-        printf("\n\n\t\twithdrawing money should be multiple of 100!\n\n\t\t input random key to continue\n");
-
-        getch();
-        return 0;
-    }
 }
 
 void changePassword(int n)
 {
     system("cls");
     date();
-    int i, l;
-    char temp[10];
-    D:
-    printf("\n\t\tplease input your original password:");
-
-    scanf("%s", password);
-    l = strcmp(password, u[n].pswdnum);
-    if (l != 0)
+    int j;                    //flag
+    char inputPassword[10];
+    //直到输对密码并且输入新的密码为止
+    while(1)
     {
-        printf("\n\t\twrong password!");
-
-        goto D;
+        printf("\n\t\tplease input your original password:");
+        getchar();
+        gets(inputPassword);
+        j= strcmp(inputPassword, user[n].password);
+        if ( j!= 0)
+        {
+            printf("\n\t\twrong password!");
+            continue;
+        }
+        else
+        {
+            printf("\n\t\tinput your new password");
+            gets(inputPassword);
+            strcpy(user[n].password, inputPassword);
+            break;
+        }
     }
-    else
+    FILE *fp = fopen("test.txt", "w");
+    for (int i = 0; i <N; i++)
     {
-
-        printf("\n\t\tinput your new password:");
-
-        scanf("%s", temp);
-        strcpy(u[n].pswdnum, temp);
+        if (strcmp(user[i].accounts, "\0") != 0)
+            fprintf(fp, "%s\t%s\t%s\t%.2lf\t%d\n", user[i].accounts, user[i].password, user[i].name,user[i].prestore,user[i].isMissing);
     }
-    FILE *fz = fopen("userinfo.txt", "w");
-    for (i = 0; i <= 99; i++)
-    {
-        if (strcmp(u[i].acnum, "\0") != 0)
-            fprintf(fz, "%s\t%s\t%s\t%.2lf\t%d\n", u[i].acnum, u[i].pswdnum, u[i].name,  u[i].money, u[i].ero);
-    }
-    fclose(fz);
+    fclose(fp);
     printf("\n\t\tchange password successful!");
     printf("\n\n\t\treturn to main page,input Enter to continue->");
-    getchar();
     getchar();
     userInterface();
 }
@@ -480,39 +345,41 @@ void lostUser(int n)
 {
     system("cls");
     date();
-    int i, l;
-    printf("\n\n\t\tconfirm your account again:");
-
-    scanf("%s", account);
-    D:
-    printf("\n\t\tplease input your password");
-
-    scanf("%s", password);
-    l = strcmp(password, u[n].pswdnum);
-    if (l != 0)
-    {
-        printf("\n\t\twrong password!");
-        goto D;
-    }
-    else
-    {
-        strcpy(u[n].acnum, "\0");
-        strcpy(u[n].pswdnum, "\0");
-        strcpy(u[n].name, "\0");
-        u[n].money = 0.00;
-        u[n].ero = 0;
-    }
-    FILE *fz = fopen("userinfo.txt", "w");
-    for (i = 0; i <= 99; i++)
-    {
-        if (u[i].acnum[0] != '\0')
-            fprintf(fz, "%s\t%s\t%s\t%.2lf\t%d\n", u[i].acnum, u[i].pswdnum, u[i].name, u[i].money, u[i].ero);
-    }
-    printf("\n\t\tuser has been signed off\n");
-
-    printf("\n\n\t\treturn to main page,input Enter to continue->");
-
+    char inputAccounts[10];
+    char inputPassword[10];
+    int j;
+    printf("\n\n\t\tconfirm your account again");
     getchar();
+    gets(inputAccounts);
+    while(1)
+    {
+        printf("\n\t\tplease input your password");
+        gets(inputPassword);
+        j = strcmp(inputPassword, user[n].password);
+        if (j!= 0)
+        {
+            printf("\n\t\twrong password!");
+            continue;
+        }
+        else
+        {
+            strcpy(user[n].accounts, "\0");
+            strcpy(user[n].password, "\0");
+            strcpy(user[n].name, "\0");
+            user[n].prestore = 0.00;
+            user[n].isMissing = 0;
+            break;
+        }
+    }
+    FILE *fp= fopen("test.txt", "w");
+    for (int i = 0;i <N; i++)
+    {
+        if (strcmp(user[i].accounts, "\0") != 0)
+            fprintf(fp, "%s\t%s\t%s\t%.2lf\t%d\n", user[i].accounts, user[i].password, user[i].name,user[i].prestore,user[i].isMissing);
+    }
+    fclose(fp);
+    printf("\n\t\tuser has been signed off\n");
+    printf("\n\n\t\treturn to main page,input Enter to continue->");
     getchar();
     userInterface();
 }
@@ -520,11 +387,12 @@ void lostUser(int n)
 void showInfo(int n)
 {
     system("cls");
-    printf("\n\n\t\t%s hello!your info is as follows\n\n", u[n].name);
-    printf("\n\t\tbalance:%.2lf\n", u[n].money);
+    date();
+    printf("\n\n\t\t%s hello!your info is as follows\n\n", user[n].name);
+    printf("\n\t\tbalance:%.2lf\n", user[n].prestore);
     printf("\n\n\t\treturn to last page, input random key to continue->");
-
-    getch();
+    getchar();
+    getchar();
     userOperate(n);
 }
 
@@ -533,137 +401,94 @@ void adminInterface()
     system("cls");
     date();
     aboutFile();
-    char adminac[10], adminpd[10];
-    int i, j;
-    strcpy(adminac, "123456");
-    strcpy(adminpd, "123456");
-    printf("\n\n\n\n\n\n\t\t\thello!administrator\n\n");
-    printf("\n\t\t\tinput administrator account: ");
-
-    scanf("%s", ac);
-    printf("\n\t\t\tplease input administrator password:");
-
-    scanf("%s", pass);
-    i = strcmp(ac, adminac);
-    j = strcmp(pass, adminpd);
-    if (i == 0 && j == 0)
+    char adminAccounts[10], adminPassword[10];
+    char inputAccounts[10], inputPassword[10];
+    int i, j;                                         //两个flag;
+    strcpy(adminAccounts, "123456");
+    strcpy(adminPassword, "123456");
+    while (1)
     {
-        printf("\n\n\t\t\thello,administrator");
-        getch();
-        adminOperate();
+        printf("\n\n\n\n\n\n\t\t\thello!administrator\n\n");
+        printf("\n\t\t\tinput administrator account: ");
+        getchar();
+        gets(inputAccounts);
+        printf("\n\t\t\tplease input administrator password:");
+        gets(inputPassword);
+        i = strcmp(inputAccounts, adminAccounts);
+        j = strcmp(inputPassword, adminPassword);
+        if (i == 0 && j == 0)
+        {
+            printf("\n\n\t\t\thello,administrator");
+            getchar();
+            adminOperate();
+            break;
+        } else{
+            printf("\n\n\t\t\tsorry, what you input is not administrator's account");
+            continue;
+        }
     }
-    fflush(stdin);
-    printf("\n\n\t\t\tsorry, what you input is not administrator's account");
-    getch();
-    exit(0);
 }
+
 void adminOperate()
 {
     system("cls");
     date();
-    int a;
-    FILE *fy = fopen("userinfo.txt", "r");
-    if (!fy)
-    {
+    int i;
+    FILE *fp = fopen("test.txt", "r");
+    if (!fp)
         printf("fail to read file\n");
-
-    }
+    fclose(fp);
     printf("\n\n\n\n\n\n\t\t\t*****please choose your entrance*****  ");
     printf("\n\n\t\t\t1.confirm users' info  \n\n\t\t\t2.confirm reported missing users  \n\n\t\t\t3.exit     \n\n");
     printf("\t\t\tinput your choice:");
     fflush(stdin);
-    scanf("%d", &a);
-    switch (a)
-    {
-        case 1:
-            search();
-            break;
-        case 2:
-            isLost();
-            break;
-        case 3:
-            exit(0);
-    }
+    scanf("%d", &i);
+    if(i==1)
+        search();
+    if(i==2)
+        isLost();
+    if(i==3)
+        Main();
 }
+
 void search()
 {
     system("cls");
     date();
-    int i, j;
-    FILE *fy = fopen("userinfo.txt", "r");
-    if (!fy)
-    {
+    FILE *fp = fopen("test.txt", "r");
+    if (!fp)
         printf("fail to read file\n");
-
-    }
-    for (i = 0; i <= 100; i++)
-    {
-        fscanf(fy, "%s\t%s\t%s\t%lf\t%d\n", u[i].acnum, u[i].pswdnum, u[i].name,  &u[i].money, &u[i].ero);
-    }
-    fclose(fy);
-    for (j = 0; j <= 100 && u[j].acnum[0] != '\0'; j++)
-    {
+    for (int i=0;i<N; i++)
+        fscanf(fp,"%s\t%s\t%s\t%lf\t%d\n", user[i].accounts, user[i].password, user[i].name,&user[i].prestore,&user[i].isMissing);
+    fclose(fp);
+    for (int i=0;i<N && strcmp(user[i].accounts,"\0")!=0; i++)
         printf("\n\n\n\t\t\tuser account:%s\n\n\t\t\tuser password:%s\n\n\t\t\tuser name:%s\n\n\t\t\tbalance:%.2lf\n\n\t\t\tuser status:%d\n\n",
-               u[j].acnum, u[j].pswdnum, u[j].name, u[j].money, u[j].ero);
-
-    }
+               user[i].accounts, user[i].password, user[i].name,user[i].prestore,user[i].isMissing);
     printf("\n\n\t\tfinished, input random key to return");
-    getch();
+    getchar();
+    getchar();
     adminOperate();
 }
+
 void isLost()
 {
     system("cls");
     date();
-    int i, j;
-    FILE *fy = fopen("userinfo.txt", "r");
-    if (!fy)
-    {
+    FILE *fp = fopen("test.txt", "r");
+    if (!fp)
         printf("fail to read file\n");
-
-    }
     printf("\n\n");
-    for (i = 0; i <= 100; i++)
+    for (int i = 0; i<N; i++)
     {
-        fscanf(fy, "%s\t%s\t%s\t%lf\t%d\n", u[i].acnum, u[i].pswdnum, u[i].name, &u[i].money, &u[i].ero);
-        if (u[i].ero == 1)
-        {
+        fscanf(fp, "%s\t%s\t%s\t%lf\t%d\n", user[i].accounts, user[i].password, user[i].name,&user[i].prestore,&user[i].isMissing);
+        if (user[i].isMissing==1)
             printf("\n\n\n\t\t\tuser account:%s\n\n\t\t\tuser password:%s\n\n\t\t\tuser name:%s\n\n\t\tbalance:%.2lf\n\n\t\t\tuser status:%d\n\n",
-                   u[i].acnum, u[i].pswdnum, u[i].name, u[i].money, u[i].ero);
-
-        }
+                   user[i].accounts, user[i].password, user[i].name,user[i].prestore,user[i].isMissing);
     }
     printf("\n\n\t\t\tfinished, input random key to return");
-    getch();
+    getchar();
+    getchar();
     adminOperate();
 }
 
-int checkPw(char *password)
-{
-    int res = 1;
-    int digitNum = 0;
-    int alphaNum = 0;
-    int containInvalidChar = 0;
 
-    for (int i = 0; i < strlen(password); ++i)
-    {
-        if (isalpha(password[i]))
-        {
-            ++digitNum;
-        }
-        else if (isdigit(password[i]))
-        {
-            ++alphaNum;
-        }
-        else
-        {
-            containInvalidChar = 1;
-            break;
-        }
-    }
-    if (strlen(password) < 6 || digitNum == 0 || alphaNum == 0||containInvalidChar==1)
-    {
-        res = 0;
-    }
-    return res;
-}
