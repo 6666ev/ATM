@@ -1,50 +1,42 @@
 //
-// Created by  on 2018/12/3.
+// Created by 96399 on 2018/12/16.
 //
 
-#ifndef ATM_USER_H
-#define ATM_USER_H
-#include <conio.h>
+#ifndef FINALL_USER_H
+#define FINALL_USER_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
-#define N 10000
+#include <conio.h>
+//最多容纳1000人(可以根据需求来修改）
+#define N 1000
 
 struct user
 {
-    char acnum[9];    //用户账号
-    char pswdnum[20];  //用户密码
-    char name[20];    //用户名字
-    //char idnum[20];   //用户身份证
-    //char phnum[15];   //用户手机号
-    //char adrss[105];  //用户地址
-    //char cardnum[20]; //用户银行卡号
-    double money;      //现有金额
-    int ero;          //挂失情况
-} u[N];
+    char accounts[10];    //用户账号
+    char password[10];    //用户密码
+    char name[10];        //用户名字
+    double prestore;      //现有金额
+    int isMissing;        //挂失情况
+} user[N];
 
-int checkPw(char *password); //检查密码合法性
+void aboutFile();        //获取文件
+void date();             //获取日期
+void Main();             //主界面
+void logIn();            //登录
+void userInterface();    //用户主界面
+void signIn();           //登录
+void missAccount();      //注销账户
+void userOperate(int n);      //用户操作界面
+void deposit(int n);     //存款
+void withdraw(int n);    //取款
+void changePassword(int n);  //修改密码
+void lostUser(int n);        //注销用户
+void showInfo(int n);     //展示信息
+void adminInterface();    //管理员界面
+void adminOperate();     //管理员操作界面
+void search();           //查看用户信息
+void isLost();            //确认挂失
 
-void aboutFile();         //文件准备
-void userInterface();     //用户操作界面
-void adminInterface();    //管理员登录界面
-void logIn();             //用户登录
-void signIn();            //用户注册
-void missAccount();       //用户挂失
-void userOperate(int);    //用户登录后操作界面
-void deposit(int);        //存款
-void withdraw(int);       //取款
-void changePassword(int); //修改密码
-void lostUser(int);       //用户注销
-void showInfo(int);       //用户信息查询
-void adminOperate();      //管理员操作界面
-void isLost();            //显示挂失的用户并确认
-void search();            //显示用户信息
-void date();              //显示当前的时间日期
-int checkAdd(char addmoney[]);
-int checkReduce(char reducemoney[], int j);
-char ac[11], pass[20];
-char account[11], password[20];
-#endif
-//ATM_USER_H
+#endif //FINALL_USER_H
