@@ -1,10 +1,18 @@
-//
+﻿//
 // Created by 96399 on 2018/12/16.
 //
 
 #include "user.h"
 int A=0;
 //文件准备函数
+void compatiablyFlush()
+{
+	#ifdef _MSC_VER
+		getchar();
+	#else
+		fflush(stdin);
+	#endif
+}
 void aboutFile()
 {
     FILE *fp = fopen("test.txt", "r");
@@ -32,7 +40,7 @@ void date()
 //主界面函数
 void Main()
 {
-    int i;
+    char i;
     system("cls");
     aboutFile();
     system("color 31");
@@ -43,14 +51,15 @@ void Main()
     printf("\n\n\t\t\t3.exit   ");
     printf("\n\n\n");
     printf("\t\t\tplease choose:");
-    fflush(stdin);
-    scanf("%d", &i);
-    if(i==1)
+    ////compatiablyFlush();
+	i = getchar();//读走换行符
+	getchar();
+    if(i=='1')
         userInterface();
-    if(i==2)
+    if(i=='2')
         adminInterface();
-    if(i==3)
-        return;
+	if (i == '3')
+		exit(0);
 }
 
 //用户界面
@@ -58,22 +67,23 @@ void userInterface()
 {
     system("cls");
     date();
-    int i;
+    char i;
     FILE *fp = fopen("test.txt", "r");
     if (!fp)
         printf("fail to read file\n");
     printf("\n\n\n\n\t\t\t*******please choose your entrance*******");
     printf("\n\n\t\t\t1.log on\n\n\t\t\t2.sign up\n\n\t\t\t3.report for lost\n\n\t\t\t4.exit\n");
     printf("\n\n\t\t\tplease input your choice:");
-    fflush(stdin);
-    scanf("%d", &i);
-    if(i==1)
+	//compatiablyFlush();
+	i = getchar();
+	getchar();//读走换行符
+    if(i=='1')
         logIn();
-    if(i==2)
+    if(i=='2')
         signIn();
-    if(i==3)
+    if(i=='3')
         missAccount();
-    if(i==4)
+    if(i=='4')
         Main();           //回到主界面
 }
 
@@ -93,7 +103,6 @@ void logIn()
         fscanf(fp, "%s\t%s\t%s\t%lf\t%d\n", user[i].accounts, user[i].password, user[i].name,&user[i].prestore,&user[i].isMissing);
     fclose(fp);
     printf("\n\n\t\tplease input your right account: ");
-    getchar();
     gets(inputAccount);
     for (i = 0; i <=N; i++)
     {
@@ -104,7 +113,6 @@ void logIn()
             {
                 printf("\n\n\t\tthis card is reported missing");
                 getchar();
-                getchar();
                 userInterface();
             }
             else
@@ -114,7 +122,6 @@ void logIn()
     if (j == 0)                                            //帐号不存在的情况
     {
         printf("\n\n\t\tthis account doesn't exist or being signed off, \n\t\tplease sign up and log on (input Enter to return)");
-        getchar();
         getchar();
         userInterface();
     }
@@ -128,13 +135,12 @@ void logIn()
         if(flag)
         {
             printf("\n\n\t\twrong password, there are %d chances left", chanceNumber);
-            fflush(stdin);
+			getchar();
+			//compatiablyFlush();
             continue;
         }
         else
-        {
             break;
-        }
     }
     printf("\n\n\t\tlog on successful");
     printf("\n\n\t\tinput any key to continue->");
@@ -146,7 +152,7 @@ void signIn()
 {
     system("cls");
     date();
-    fflush(stdin);
+    //compatiablyFlush();
     int j = 0;
     char inputAccounts[10];   //记录用户输入的帐号
     FILE* fp = fopen("test.txt", "r");
@@ -198,7 +204,6 @@ void missAccount()
     fclose(fp);
     //进行注销
     printf("\n\n\t\tplease input your right account to be reported missing");
-    getchar();
     gets(inputAccounts);
     printf("\n\t\tinput your password:");
     gets(inputPassword);
@@ -227,23 +232,24 @@ void userOperate(int n)
 {
     system("cls");
     date();
-    int i;
+    char i;
     printf("\n\n\n\n\t\t\t*******choose your wanted *******");
     printf("\n\n\t\t\t1.save money\n\n\t\t\t2.withdraw money  \n\n\t\t\t3.change password  \n\n\t\t\t4.user sign off  \n\n\t\t\t5.search info \n\n\t\t\t6.exit \n");
     printf("\n\t\tplease input your choice:");
-    fflush(stdin);
-    scanf("%d", &i);
-    if(i==1)
+    //compatiablyFlush();
+	i = getchar();
+	getchar();
+    if(i=='1')
         deposit(n);
-    if(i==2)
+    if(i=='2')
         withdraw(n);
-    if(i==3)
+    if(i=='3')
         changePassword(n);
-    if(i==4)
+    if(i=='4')
         lostUser(n);
-    if(i==5)
+    if(i=='5')
         showInfo(n);
-    if(i==6)
+    if(i=='6')
         userInterface();
 }
 
@@ -255,7 +261,6 @@ void deposit(int n)
     char inputMoney[10];
     system("cls");
     printf("\n\n\t\tplease input amount of the money you want to save");
-    getchar();
     gets(inputMoney);
     money=atoi(inputMoney);
     TS= money + user[n].prestore;
@@ -282,14 +287,12 @@ void withdraw(int n)
     char inputMoney[10];
     system("cls");
     printf("\n\n\t\tplease input the amount of money you want to withdraw");
-    getchar();
     gets(inputMoney);
     money = atoi(inputMoney);
     printf("\n\t\twithdraw successful, please get your paper money in the right port\n\n");
     TS = user[n].prestore-money;
     user[n].prestore =TS;
     printf("\t\tyour current balance is:%.2lf\n", user[n].prestore);
-
     FILE *fp = fopen("test.txt", "w");
     for (int i=0; i<N; i++)
     {
@@ -312,7 +315,6 @@ void changePassword(int n)
     while(1)
     {
         printf("\n\t\tplease input your original password:");
-        getchar();
         gets(inputPassword);
         j= strcmp(inputPassword, user[n].password);
         if ( j!= 0)
@@ -349,7 +351,6 @@ void lostUser(int n)
     char inputPassword[10];
     int j;
     printf("\n\n\t\tconfirm your account again");
-    getchar();
     gets(inputAccounts);
     while(1)
     {
@@ -392,7 +393,6 @@ void showInfo(int n)
     printf("\n\t\tbalance:%.2lf\n", user[n].prestore);
     printf("\n\n\t\treturn to last page, input random key to continue->");
     getchar();
-    getchar();
     userOperate(n);
 }
 
@@ -410,7 +410,6 @@ void adminInterface()
     {
         printf("\n\n\n\n\n\n\t\t\thello!administrator\n\n");
         printf("\n\t\t\tinput administrator account: ");
-        getchar();
         gets(inputAccounts);
         printf("\n\t\t\tplease input administrator password:");
         gets(inputPassword);
@@ -433,7 +432,7 @@ void adminOperate()
 {
     system("cls");
     date();
-    int i;
+    char i;
     FILE *fp = fopen("test.txt", "r");
     if (!fp)
         printf("fail to read file\n");
@@ -441,13 +440,14 @@ void adminOperate()
     printf("\n\n\n\n\n\n\t\t\t*****please choose your entrance*****  ");
     printf("\n\n\t\t\t1.confirm users' info  \n\n\t\t\t2.confirm reported missing users  \n\n\t\t\t3.exit     \n\n");
     printf("\t\t\tinput your choice:");
-    fflush(stdin);
-    scanf("%d", &i);
-    if(i==1)
+    //compatiablyFlush();
+	i = getchar();
+	getchar();
+    if(i=='1')
         search();
-    if(i==2)
+    if(i=='2')
         isLost();
-    if(i==3)
+    if(i=='3')
         Main();
 }
 
@@ -465,7 +465,6 @@ void search()
         printf("\n\n\n\t\t\tuser account:%s\n\n\t\t\tuser password:%s\n\n\t\t\tuser name:%s\n\n\t\t\tbalance:%.2lf\n\n\t\t\tuser status:%d\n\n",
                user[i].accounts, user[i].password, user[i].name,user[i].prestore,user[i].isMissing);
     printf("\n\n\t\tfinished, input random key to return");
-    getchar();
     getchar();
     adminOperate();
 }
@@ -486,7 +485,6 @@ void isLost()
                    user[i].accounts, user[i].password, user[i].name,user[i].prestore,user[i].isMissing);
     }
     printf("\n\n\t\t\tfinished, input random key to return");
-    getchar();
     getchar();
     adminOperate();
 }
