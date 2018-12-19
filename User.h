@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by 96399 on 2018/12/16.
 //
 
@@ -11,16 +11,17 @@
 #include <conio.h>
 //最多容纳1000人(可以根据需求来修改）
 #define N 1000
-
+#ifdef __clang__
+	#include "fileProcessing.c"
+#endif
 struct user
 {
-    char accounts[10];    //用户账号
-    char password[10];    //用户密码
-    char name[10];        //用户名字
-    double prestore;      //现有金额
-    int isMissing;        //挂失情况
-} user[N];
-
+	char accounts[10];    //用户账号
+	char password[10];    //用户密码
+	char name[10];        //用户名字
+	double prestore;      //现有金额
+	int isMissing;        //挂失情况
+};
 void aboutFile();        //获取文件
 void date();             //获取日期
 void Main();             //主界面

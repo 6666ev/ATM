@@ -2,15 +2,14 @@
 // Created by 96399 on 2018/12/16.
 //
 
-#include "user.h"
-/*
+#include "User.h"
 #include "fileProcessing.h"
 #ifdef __clang__
 	#include "fileProcessing.c"
-
 #endif
-*/
+struct user user[N];
 int A=0;
+
 void compatiablyFlush()
 {
 	#ifdef _MSC_VER
@@ -55,6 +54,7 @@ void Main()
 		aboutFile();
 		system("color 31");
 		date();
+		A = Read();
 		printf("\n\n\n\t\t\tPlease select your identity category: ");
 		printf("\n\n\t\t\t1.user   ");
 		printf("\n\n\t\t\t2.admin   ");
