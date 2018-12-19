@@ -207,7 +207,10 @@ void Unlock(void* const dst, void* const src, int length, int mode)
 	unsigned char* cur_d;
 	cur_s = (unsigned short*)src;
 	cur_d = (unsigned char*)dst;
-	for (int i = 0; i < length/2; i++)
+	for (int i = 0; i < length / 2; i++)
+		//这个/2解决了一个很重要的bug，因为在Unlock时源的长度是目的的两倍，由于之前
+		//写的传入的都是源的长度，因此在这里需要/2避免越界。之前这个越界导致堆内存
+		//被破坏，我de了好久的bug都没有完成。
 	{
 		*cur_d = Unlock_2to1(*cur_s, mode);
 		cur_s++;
@@ -390,14 +393,16 @@ int Check()
 	for (i = 0; i < FILE_NUMBER; i++)
 		LegalPath[i] = 1;
 
-	//todo 如果在根本没有文件的情况下，这里也会报错，更好的办法是直接创建文件。
-	//先检查文件能否打开
 	for (i = 0; i < FILE_NUMBER; i++)
 	{
 		if ((pCodeFile[i] = fopen(keys[i].CodeFile, "rb")) == NULL)
 		{
-			CloseFiles(pCodeFile, i);
-			return -1;
+			//打开失败，可以认为是因为文件不存在
+			pCodeFile[i] = fopen(keys[i].CodeFile, "w");//新建文件
+			if (pCodeFile[i] == NULL)//仍然失败，退出
+				return -1;
+			fclose(pCodeFile[i]);
+			pCodeFile[i] = fopen(keys[i].CodeFile, "rb");//正式打开文件
 		}
 	}
 	//检查文件长度是否合法
@@ -405,17 +410,8 @@ int Check()
 		if ((Length[i] = GetFileLength(pCodeFile[i])) % (2 * sizeof(struct user)) != 0)
 		{
 			CloseFiles(pCodeFile, 3);
-			return -1;
+			return -1;//文件长度不一致，退出
 		}
-	//文件长度不一致，退出
-	for (i = 0; i < FILE_NUMBER-1; i++)
-	{
-		if (Length[i] != Length[i + 1])
-		{
-			CloseFiles(pCodeFile, 3);
-			return -1;
-		}
-	}
 
 	//对环形路线进行检查
 	for (i = 0; i<FILE_NUMBER; i++)
