@@ -11,9 +11,6 @@
 #include <conio.h>
 //最多容纳1000人(可以根据需求来修改）
 #define N 1000
-#ifdef __clang__
-	#include "fileProcessing.c"
-#endif
 struct user
 {
 	char accounts[10];    //用户账号

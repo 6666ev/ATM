@@ -6,7 +6,7 @@
 #include"fileProcessing.h"
 #include "User.h"
 extern struct user user[];
-extern int A;
+extern int userNum;
 const struct key keys[FILE_NUMBER] = {
 	{ 267,17,145,"b1.bin" },{ 335,5,53,"b2.bin" },
 { 341,7,43,"b3.bin" },{ 301,11,23,"b4.bin" }
@@ -207,12 +207,11 @@ void Unlock(void* const dst, void* const src, int length, int mode)
 	unsigned char* cur_d;
 	cur_s = (unsigned short*)src;
 	cur_d = (unsigned char*)dst;
-	for (int i = 0; i < length; i++)
+	for (int i = 0; i < length/2; i++)
 	{
 		*cur_d = Unlock_2to1(*cur_s, mode);
 		cur_s++;
 		cur_d++;
-		(struct user *)malloc(sizeof(struct user));
 	}
 }
 
@@ -228,12 +227,20 @@ void Unlock(void* const dst, void* const src, int length, int mode)
 */
 int Read()
 {
+	//system("cls");
 	int mode = Check();
+	if (mode == -1)
+	{
+		printf("Invalid files!");
+		getchar();
+		exit(-1);
+	}
+	//system("cls");
 	int count = 0;
 	FILE* fp = fopen(keys[mode].CodeFile, "rb");
 	int unlock_size = sizeof(struct user) * 2;//从文件中读取两倍长度的内容到内存中
 	int copy_size = sizeof(struct user);//实际一个结构体变量的长度
-	struct user *copy_buffer = (struct user *)malloc(copy_size);
+	void* copy_buffer = malloc(copy_size);
 	void* unlock_buffer = malloc(unlock_size);
 	while (fread(unlock_buffer, unlock_size, 1, fp))
 		//之前已经保证了文件大小是sizeof struct的整数倍，而且我们不考虑
@@ -241,13 +248,17 @@ int Read()
 		//完了
 	{
 		Unlock(copy_buffer, unlock_buffer, unlock_size, mode);
-		user[count] = *copy_buffer;
+		user[count] = *((struct user*)copy_buffer);
+//		system("cls");
 		//我****到底为什么malloc会失败？ 11/20 17:30
-		//我****为什么成功了？？？ 11/20：21：22
+		//我****为什么成功了？？？ 11/20 21：22
 		//遇到bug别紧张，烧给佛祖一炷香。心平气和敲代码，早日坐上头等舱(误)。11.22/15：50
 		//copy_buffer = (struct user *)malloc(copy_size);
+		//大家好，我又遇到bug了，而且好像是一样的问题呢  12/19 19：53
 		count++;
 	}
+//	system("cls");
+	free((struct user*)copy_buffer);
 	copy_buffer = NULL;
 	fclose(fp);
 	return count;
@@ -275,7 +286,7 @@ int Write()
 		int lock_size = sizeof(struct user) * 2;
 		struct user* copy_buffer = malloc(copy_size);//将每个账户拷贝到buffer内，避免用户资料被修改
 		void *lock_buffer = malloc(lock_size);//被加密后的内容储存位置
-		for (i = 0; i < A; i++)//对于每个账户
+		for (i = 0; i < userNum; i++)//对于每个账户
 		{
 			*copy_buffer = user[i];
 			for (int j = 0; j < FILE_NUMBER; j++)//对于不同加密模式
@@ -379,6 +390,7 @@ int Check()
 	for (i = 0; i < FILE_NUMBER; i++)
 		LegalPath[i] = 1;
 
+	//todo 如果在根本没有文件的情况下，这里也会报错，更好的办法是直接创建文件。
 	//先检查文件能否打开
 	for (i = 0; i < FILE_NUMBER; i++)
 	{
@@ -396,7 +408,7 @@ int Check()
 			return -1;
 		}
 	//文件长度不一致，退出
-	for (i = 0; i < FILE_NUMBER; i++)
+	for (i = 0; i < FILE_NUMBER-1; i++)
 	{
 		if (Length[i] != Length[i + 1])
 		{
@@ -434,14 +446,7 @@ int Check()
 		//四个都不一样代表文件已经被毁了
 		flag = -1;
 	CloseFiles(pCodeFile, 3);
-	
-	if (flag == -1)
-	{
-		printf("Invaild files!");
-		getchar();
-		exit(-1);
-	}
-	else return flag;
+	return flag;
 }
 void LockTest(int mode)
 {
