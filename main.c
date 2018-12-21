@@ -1,6 +1,6 @@
-﻿#include "user.h"
+﻿#include "User.h"
 #ifdef __clang__
-#include "user.c"
+#include "User.c"
 #endif
 
 int main()
