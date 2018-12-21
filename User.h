@@ -36,5 +36,6 @@ void adminInterface();    //管理员界面
 void adminOperate();     //管理员操作界面
 void search();           //查看用户信息
 void isLost();            //确认挂失
+int checkPw(char *password); //检查密码合法性
 
 #endif //FINALL_USER_H
